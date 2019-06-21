@@ -57,7 +57,7 @@ Vanni辉的大学毕业项目，课题【基于百度地图的拼车网设计与
 
 
 [后端配置说明]: https://github.com/VanniAmor/hitch/wiki/%E5%90%8E%E7%AB%AF%E9%A1%B9%E7%9B%AE%E7%9A%84%E9%85%8D%E7%BD%AE "后端配置说明"
-[前端配置说明]: https://github.com/VanniAmor/vanni_hitch_driver/wiki "前端配置说明"
+[前端配置说明]: https://github.com/VanniAmor/vanni_hitch_driver/wiki/%E5%89%8D%E7%AB%AF%E9%85%8D%E7%BD%AE "前端配置说明"
 
 # 有问题
 
