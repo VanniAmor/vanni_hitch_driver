@@ -1,4 +1,4 @@
-# VanniHitch_Passenger
+# VanniHitch_Driver
 Vanni辉的大学毕业项目，课题【基于百度地图的拼车网设计与开发】
 
 ## 项目介绍
