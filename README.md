@@ -7,7 +7,7 @@ Vanni辉的大学毕业项目，课题【基于百度地图的拼车网设计与
 
 - 后端地址：  https://github.com/VanniAmor/hitch
 - 司机端地址：https://github.com/VanniAmor/vanni_hitch_driver
-- 乘客端地址：https://github.com/VanniAmor/vanni_hitch_driver
+- 乘客端地址：https://github.com/VanniAmor/vanni_hitch_passenger
 
 `项目仅做学习和交流，请勿用作商业用途和销售获利`
 
