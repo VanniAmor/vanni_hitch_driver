@@ -1,0 +1,88 @@
+body{
+	background: #fff;
+}
+/********************************* 顶部导航栏 *********************************/
+.bar{
+	background: rgb(0,200,140);
+	height: 8%;
+	display: flex;
+	position: fixed;
+	width: 100%;
+	top: 0;
+}
+#icon-menu{
+	color:white;
+	margin: auto;
+	margin-left: -.8rem;
+	margin-right: 0;
+}
+.header-title{
+	margin: auto;
+	color:white;
+	width: 90%;
+}
+.search-input{
+	width: 100%;
+	background: #fff;
+}
+.search-input::-webkit-input-placeholder{
+	color:#666;
+}
+/********************************* 页面主体 *********************************/
+.list{
+	position: absolute;
+	top: 3.8rem;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
+}
+.title{
+	line-height: 2rem;
+	background: #eee;
+	padding-left: .5rem;
+	color: #666;
+	font-size: 16px;
+}
+.button-list{
+	overflow: hidden;
+	padding: .7rem;
+}
+.button-wrapper{
+	float: left;
+	width: 31%;
+}
+.button{
+	margin: .3rem;
+	padding: .5rem 0;
+	text-align: center;
+	width: 90%;
+	font-size: 16px;
+	border-radius: 5px;
+}
+/********************************* 字母列表 *********************************/
+.letter-list{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	position: absolute;
+	top: 3.8rem;
+	right: 0;
+	bottom: 0;
+	width: .4rem;
+}
+.letter-item{
+	list-style-type: none;
+	margin-left: -1.5rem;
+	text-align: center;
+	color: #555;
+	margin-top: .3rem;
+	z-index: 100;
+}
+/********************************* 提示信息 *********************************/
+.tips{
+	width: 100%;
+	text-align: center;
+	font-size: 16px;
+	margin-top: 1rem;
+}

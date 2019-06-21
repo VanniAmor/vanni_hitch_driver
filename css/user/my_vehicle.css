@@ -1,0 +1,83 @@
+.bar{
+	background: rgb(0,200,140);
+	height: 3rem;
+	line-height: 3rem;
+	display: flex;
+}
+#icon-menu{
+	color:white;
+	margin: auto;
+	margin-left: -1rem;
+	margin-right: 0;
+}
+#add_vehicle{
+	color:white;
+	margin: auto;
+	margin-right: 0;
+	margin-left: 0;
+	text-align: center;
+	width: 3rem;
+}
+.header-title{
+	margin: auto;
+	color:white;
+}
+.my-card{
+	margin: auto;
+	margin-top: 6rem;
+	border-radius: 1rem;
+	width: 90%;
+}
+.my-vehicle{
+	width: 100%;
+	height: 100%;
+}
+.vehicle-info{
+	width: 100%;
+}
+.info-item{
+	line-height: 1.6rem;
+}
+.info-title{
+	font-size: 16px;
+}
+.info-content{
+	font-size: 16px;
+	position: absolute;
+	right: 1rem;
+}
+#vehicleInfo{
+	height: 100%;
+}
+.mui-slider{
+	height: 100%;
+}
+.my-indicator{
+	position: absolute;
+	bottom: 0;
+}
+.mui-card{
+	box-shadow: none;
+}
+.mui-slider .mui-slider-group .mui-slider-item .using {
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 100;
+    width: 4rem;
+    height:4rem;
+}
+.my-btn{
+	position: absolute;
+	bottom: 3rem;
+	left: 50%;
+	margin-left: -5rem;
+	background: rgb(0,200,140);
+	font-size: 16px;
+	color: #fff;
+	width: 10rem;
+	border-radius: 2rem;
+}
+.mui-slider-group{
+	height: 100%;
+}

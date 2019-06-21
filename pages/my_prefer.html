@@ -1,0 +1,92 @@
+<!doctype html>
+<html style="height: 100%;">
+	<head>
+		<meta charset="utf-8">
+		<title>我的偏好</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/user/my_prefer.css">
+		<script src="../js/mui.js"></script>
+		<script type="text/javascript">
+			mui.init()
+		</script>
+	</head>
+
+	<body style="height: 100%;">
+		<header class="mui-bar mui-bar-nav main-bar" style="border: 0; box-shadow: none;">
+			<a id="icon-menu" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title main-title">我的偏好</h1>
+		</header>
+		<div class="main">
+			<ul class="mui-table-view mui-table-view-radio">
+				<li class="mui-table-view-cell mui-media info-item" id="less_time">
+					<a class="mui-navigate-right">
+						<div class="item">
+							<img class="mui-pull-left icon-logo-mid list-icon" src="../imgs/clock.png">
+							<span>最少时间</span>
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media info-item" id="less_distance">
+					<a class="mui-navigate-right">
+						<div class="item">
+							<img class="mui-pull-left icon-logo-mid list-icon" src="../imgs/shortDistance.png">
+							<span>最短距离</span>
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media info-item" id="avoid_highload">
+					<a class="mui-navigate-right">
+						<div class="item">
+							<img class="mui-pull-left icon-logo-mid list-icon" src="../imgs/avoidHeight.png">
+							<span>避开高速</span>
+						</div>
+					</a>
+				</li>
+			</ul>
+			<div class="tips">
+				选择您的驾车方案的策略配置
+			</div>
+		</div>
+	</body>
+
+</html>
+
+<script>
+	var list = document.querySelector('.mui-table-view.mui-table-view-radio');
+	mui.plusReady(function(){
+		var prefer = localStorage.getItem('my_prefer')
+		switch (prefer)
+		{
+			case '0':
+				document.querySelector('#less_time').classList.add('mui-selected')
+				break;
+			case '1':
+				document.querySelector('#less_distance').classList.add('mui-selected')
+				break;
+			case '2':
+				document.querySelector('#avoid_highload').classList.add('mui-selected')
+				break;
+			default:
+				break;
+		}
+	})
+	
+	list.addEventListener('selected',function(e){
+		switch (e.detail.el.innerText)
+		{
+			case '最少时间':
+				localStorage.setItem('my_prefer', 0)
+				break;
+			case '最短距离':
+				localStorage.setItem('my_prefer', 1)
+				break;
+			case '避开高速':
+				localStorage.setItem('my_prefer',2)
+				break;
+			default:
+				break;
+		}
+	});
+	
+</script>

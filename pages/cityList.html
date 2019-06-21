@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>选择城市</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/user/cityList.css"/>
+		<script src="https://unpkg.com/better-scroll@1.0.1/dist/bscroll.min.js"></script>
+		<script src="../js/axios.min.js" type="text/javascript"></script>
+		<script type="text/javascript" src="../js/base.js"></script>
+		<script type="text/javascript" src="../js/config.js"></script>
+		<script type="text/javascript" src="../js/vue.min.js"></script>
+		<script src="../js/mui.js"></script>
+		<script type="text/javascript">
+			mui.init()
+		</script>
+	</head>
+
+	<body>
+		<div id="vuemain">
+			<header class="mui-bar mui-bar-nav mui-bar-nav-bg bar">
+				<a id="icon-menu" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<span class="header-title"><input type="text" v-model.trim="keyword" class="search-input" id="suggestId" style="background:#fff;color: #666;height: 2.3rem;border: 0;border-bottom:2px solid #ffffff; margin: auto;" placeholder="请输入城市名或拼音"></span>
+				<div id="searchResultPanel" style="border:1px solid #C0C0C0;width:150px;height:auto;display: none;"></div>
+			</header>
+			<div class="list">
+				<div class="area" v-show="keyword">
+					<div class="title border-topbottom">搜素结果</div>
+					<div class="button-list">
+						<div class="button-wrapper" v-for="item in list">
+							<button type="button" class="mui-btn mui-btn-outlined button" @click="handleCityClick(item.name)">{{item.name}}</button>
+						</div>
+						<div class="tips" v-show="hasNoData">没有找到匹配数据</div>
+					</div>
+				</div>
+				<div class="mui-scroll-wrapper" v-show="!keyword">
+					<div class="mui-scroll">
+						<div class="area">
+							<div class="title border-topbottom">当前城市</div>
+							<div class="button-list">
+								<div class="button-wrapper">
+									<button type="button" class="mui-btn mui-btn-outlined button">佛山</button>
+								</div>
+							</div>
+						</div>
+						<div class="area">
+							<div class="title border-topbottom">热门城市</div>
+							<div class="button-list">
+								<div class="button-wrapper" v-for="hot of hotCities" :key="hot.id">
+									<button type="button" class="mui-btn mui-btn-outlined button">{{hot.name}}</button>
+								</div>
+							</div>
+						</div>
+						<div class="area" 
+						  v-for="(item,key) of cities"
+						  :key="key"
+						  :ref=`city${key}`
+						>
+							<div class="title border-topbottom">{{key}}</div>
+							<div class="button-list">
+								<div class="button-wrapper" v-for="city in item" :key="city.id">
+									<button type="button" class="mui-btn mui-btn-outlined button" @click="handleCityClick(city.name)">{{city.name}}</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<ul class="letter-list" v-show="!keyword">
+				<li class="letter-item"
+				  v-for="item of letters"
+				  :key="item"
+				  :ref="item"
+				  @click="handleLetterClick"
+				  @touchstart="handleTouchStart"
+				  @touchmove="handleTouchMove"
+				  @touchend="handleTouchEnd"
+				>{{item}}</li>
+			</ul>
+		
+		</div>
+	</body>
+	<script type="text/javascript">
+		
+		var VueObject = new Vue({
+			el: "#vuemain",
+			data: function(){
+				return {
+					cities:{},
+					hotCities: [],
+					letter: '',
+					keyword: '',
+					list: [],
+					timer: null,
+					choose_origin: false,
+					choose_destination: false
+				}
+			},
+			computed:{
+				letters () {
+					const letters = []
+					for (let i in this.cities) {
+						letters.push(i)
+					}
+						return letters
+				},
+				hasNoData() {
+					return !this.list.length
+				}
+			},
+			watch: {
+				keyword() {
+					if(this.timer){
+						clearTimeout(this.timer)
+					}
+					if (!this.keyword) {
+						this.list = []
+						return;
+					}
+					this.timer = setTimeout(() => {
+						const result = [];
+						for(let i in this.cities){
+							this.cities[i].forEach((value) => {
+								if(value.spell.indexOf(this.keyword) > -1 || 
+									value.name.indexOf(this.keyword) > -1){
+									result.push(value);
+								}
+							})
+						}
+						this.list = result;
+					},100)
+				}
+			},
+			methods: {
+				getCityInfo(){
+					axios.get('../js/city.json').then(this.handleGetCityInfoSucc)
+				},
+				handleGetCityInfoSucc(res){
+					res = res.data
+					if(res.ret && res.data){
+						console.log(res.data)
+						this.hotCities = res.data.hotCities;
+						this.cities = res.data.cities;
+					}
+				},
+				handleLetterChange(letter){
+					this.letter = letter;
+				},
+				handleLetterClick(e){
+					var letter = e.target.innerHTML
+					//获取对应字母元素的高度
+					const element = this.$refs['city' + letter][0]
+					var distance = -element.offsetTop 
+					mui('.mui-scroll-wrapper').scroll().setTranslate(0 , distance, 500);//100毫秒滚动到顶
+				},
+				handleTouchStart(e){
+					this.touchStatus = true;
+				},
+				handleTouchMove(e){
+					if(this.touchStatus){
+						const startY = this.$refs['A'][0].offsetTop
+						const touchY = e.touches[0].clientY - 58.8
+						const index = Math.floor((touchY - startY) / (21 + 6))
+						if(index >= 0 && index < this.letters.length){
+							const element = this.$refs['city' + this.letters[index]][0]
+							var distance = -element.offsetTop 
+							mui('.mui-scroll-wrapper').scroll().setTranslate(0 , distance, 500);//100毫秒滚动到顶 
+						}
+					}
+				},
+				handleTouchEnd(){
+					this.touchStatus = false;
+				},
+				handleCityClick(cityName){
+					// 触发事件
+					if(this.choose_origin){
+						// 选择出发点
+						var view = plus.webview.getWebviewById("long_journey");
+						mui.fire(view, 'choose_origin', {city, cityName})
+						mui.back()
+					}else if(this.choose_destination){
+						// 选择终点
+						var view = plus.webview.getWebviewById("long_journey");
+						mui.fire(view, 'choose_destination', {city, cityName})
+						mui.back()
+					}else{
+						return
+					}
+				}
+			},
+			mounted() {
+				this.getCityInfo()
+				mui('.mui-scroll-wrapper').scroll({
+					deceleration: 0.0005 ,//flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
+					bounce: true ,//是否启用回弹
+					scrollX: false, //是否横向滚动
+				});
+			}
+		})
+		
+		mui.plusReady(function(){
+			
+		})
+		
+		document.addEventListener('choose_origin', function(){
+			VueObject.choose_origin = true
+			VueObject.choose_destination = false
+		})
+		document.addEventListener('choose_destination', function(){
+			VueObject.choose_origin = false
+			VueObject.choose_destination = true
+		})
+		
+	</script>
+
+
+</html>
+

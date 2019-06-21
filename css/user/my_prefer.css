@@ -1,0 +1,42 @@
+body{
+	background-color: #fff;
+}
+/********************************** 头部导航栏 ********************************/
+.main-bar{
+	background: rgb(0,200,140);
+}
+#icon-menu{
+	color: white;
+}
+.main-title{
+	color: white;
+	font-size: 1rem;
+	font-family: "微软雅黑";
+}
+
+.main{
+	margin-top: 2.8rem;
+	background: white;
+}
+/********************************** 列表 ********************************/
+.item{
+	display: flex;
+	height: 3.8rem;
+}
+.item img{
+	margin: auto;
+	margin-left: 1rem;
+	width: 3rem;
+	margin-right: 0;
+}
+.item span{
+	margin: auto;
+	margin-left: 2rem;
+}
+/********************************** 下方文字 ********************************/
+.tips{
+	position: absolute;
+	bottom: 3rem;
+	text-align: center;
+	width: 100%;
+}

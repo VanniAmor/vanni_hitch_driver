@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+	<meta http-equiv="content-security-policy">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+	<link rel="stylesheet" href="css/login/login.css">
+	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+	<script src="js/config.js"></script>
+    <script type="text/javascript">
+      	mui.init();
+    </script>
+</head>
+<body>
+	<div class="main">
+		<div class="img-wrapper">
+			<img src="imgs/login.jpg" alt="" class='logo'>
+		</div>
+		<div class="content">
+			<form class="">
+				<div class="mui-input-row">
+					<label class='my-icon'><span class="mui-icon mui-icon-phone"></span></label>
+					<input type="text" class='mobile' placeholder="手机号码" value='15521634926'>
+				</div>
+				<hr class="my-line">
+				<div class="mui-input-row">
+					<label class='my-icon'><span class="mui-icon mui-icon-locked"></span></label>
+					<input type="password" class="mui-input-password password" placeholder="密码" value='123456'>
+				</div>
+				<hr class="my-line">
+			</form>
+			<button class="my-btn"><strong>登录</strong></button> 
+			<div>
+				<span class="tips forget">忘记密码</span>
+				<span class="tips">|</span>
+				<span class="tips register">注册账号</span>
+			</div>
+
+			<p class='other-methods'>其他方式</p>
+			
+			<div class="btn-group">
+				<img class="other-login" src="imgs/qq.png" alt="">
+				<img class="other-login" src="imgs/wechat.png" alt="">
+			</div>
+		</div>
+		
+	</div>
+	
+</body>
+</html>
+
+<script type="text/javascript">
+
+var mainPage = null
+
+mui.plusReady(function(){
+	if( localStorage.getItem('token_driver') ){
+		//直接跳转到首页
+		goToPages('./pages/main.html')
+	}
+})
+
+//点击登录
+mui(document.body).on('tap', '.my-btn', function(e) {
+    mui(this).button('loading');
+	var mobile = mui("input.mobile")[0].value;
+	var password = mui("input.password")[0].value;
+	$.ajax({
+		//url:'http://www.hitch.com:8080/login',
+		url: baseURL + '/login',
+		type: 'post',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			'Accept':'application/vnd.lumen.driver+json'
+		},
+		data:{
+			mobile:mobile,
+			password: password
+		},
+		dataType:'json',
+		success:function(res){
+			localStorage.setItem('token_driver',res.token);
+			localStorage.setItem('did', res.did)
+			mui('button.my-btn').button('reset');
+			plus.nativeUI.closeWaiting()
+			goToPages('./pages/main.html')
+		},
+		error:function(xhr,type,errorThrown){
+			//异常处理；
+			console.log(type);
+		}
+	})
+});
+
+//点击注册
+mui(document.body).on('tap','.register',function(e) {
+	goToPages('pages/register.html');
+})
+
+mui(document.body).on('tap','.forget',function(e) {
+	//goToPages('pages/id_verify.html');
+})
+
+//页面跳转
+function goToPages(page){
+	mui.openWindow({
+		url:page,
+		id:page,
+		createNew:false,//是否重复创建同样id的webview，默认为false:不重复创建，直接显示
+		waiting:{
+		  autoShow:true,//自动显示等待框，默认为true
+		  title:'正在加载...',//等待对话框上显示的提示内容
+		}
+	})
+}
+</script>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>路线计算</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/main/route_computed.css">
+		<link rel="stylesheet" type="text/css" href="../css/animate.css">
+		<script src="../js/mui.js"></script>
+		<script src="../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/axios.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/config.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=百度ak"></script>
+		<script type="text/javascript" src="http://developer.baidu.com/map/jsdemo/demo/convertor.js"></script>
+		<script type="text/javascript">
+			mui.init()
+		</script>
+	</head>
+	<body style="height: 100%;">
+		<div id="vuemain">
+			<header class="mui-bar mui-bar-nav mui-bar-nav-bg bar">
+				<a id="icon-menu" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" v-if="!showLast"></a>
+				<a id="lastPage" class="mui-pull-right" v-if="showLast" @click="goLast()"><span class="next-btn">上一页</span></a>
+				<span class="header-title">出行路线</span>
+				<a id="nextPage" class="mui-pull-right" v-if="showNext" @click="goNext()"><span class="next-btn">下一页</span></a>
+			</header>
+			<div id="container">
+				
+			</div>
+			<div class="showBtn" style="display: none;">
+				<img src="../imgs/uparrow.png" alt="">
+			</div>
+			<div class="route_info">
+				<div class="mui-slider" @slide="itemSlide">
+					<div class="mui-slider-group" v-show="!showDetail">
+						<!-- 显示接单信息 -->
+						<div class="mui-slider-item" v-if="bookOrder" v-for="item in RouteInfo.routeInfo">
+							<div class="mui-card routeInfo_card">
+								<div class="mui-card-content card-content">
+									<div class="userInfo">
+										<div class="username">{{getName(item.sex, item.realname)}}</div>
+										<div class="mobile" @click="dial(item.mobile)">{{item.mobile}}</div>
+										<div class="change" @click="showDetailContent"><img src="../imgs/change.png" alt=""></div>
+									</div>
+									<div class="other" @click.stop="showContent">
+										<div class="time">
+											<img src="../imgs/clock.png" class="route-img" alt="" style="width: 1.5rem;height: 1.5rem;">
+											<span class="word">{{getTime(item.depart_time)}} ~ {{getTime(item.arrive_time)}}</span>
+										</div>
+										<div class="person">
+											<img src="../imgs/user/person.png" class="route-img-person" alt="">
+											<span>{{item.person}}人</span>
+										</div>
+									</div>
+									<div class="routeInfo" @click.stop="showContent">
+										<div class="route-item">
+											<div class="title">
+												<img src="../imgs/user/circle1.png" class="route-img" alt="" style="width: 1.4rem;height: 1.4rem;">
+												<span class="word">起点</span>
+											</div>
+											<div class="route-content">
+												{{item.origin}}
+											</div>
+										</div>
+										<div class="route-item">
+											<div class="title">
+												<img src="../imgs/user/circle2.png" class="route-img" alt="" style="width: 1.5rem;height: 1.5rem;">
+												<span class="word">终点</span>
+											</div>
+											<div class="route-content">
+												{{item.destination}}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- 显示订单信息 -->
+						<div class="mui-slider-item" v-if="!bookOrder" v-for="item in OrderInfo.record_list[OrderInfo.index]">
+							<div class="mui-card routeInfo_card" >
+								<div class="mui-card-content card-content">
+									<div class="userInfo">
+										<div class="username">{{getName(item.sex, item.realname)}}</div>
+										<div class="mobile" @click="dial(item.mobile)">{{item.mobile}}</div>
+										<div class="change" @click="showDetailContent"><img src="../imgs/change.png" alt=""></div>
+									</div>
+									<div class="other" @click.stop="showContent">
+										<div class="time">
+											<img src="../imgs/clock.png" class="route-img" alt="" style="width: 1.5rem;height: 1.5rem;">
+											<span class="word">{{getTime(item.depart_time)}} ~ {{getTime(item.arrive_time)}}</span>
+										</div>
+										<div class="person">
+											<img src="../imgs/user/person.png" class="route-img-person" alt="">
+											<span>{{item.person}}人</span>
+										</div>
+									</div>
+									<div class="routeInfo">
+										<div class="route-item" @click.stop="showContent">
+											<div class="title">
+												<img src="../imgs/user/circle1.png" class="route-img" alt="" style="width: 1.4rem;height: 1.4rem;">
+												<span class="word">起点</span>
+											</div>
+											<div class="route-content">
+												{{item.origin}}
+											</div>
+										</div>
+										<div class="route-item">
+											<div class="title">
+												<img src="../imgs/user/circle2.png" class="route-img" alt="" style="width: 1.5rem;height: 1.5rem;">
+												<span class="word">终点</span>
+											</div>
+											<div class="route-content">
+												{{item.destination}}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="mui-card routeInfo_card_detail" v-show="showDetail">
+						<div class="card-header">
+							<div class="header_change" @click="showDetailContent"><img src="../imgs/change.png" alt=""></div>
+						</div>
+						<div class="mui-card-content routes_detail route_detail" id="route_detail" >
+						</div>
+					</div>
+				</div>
+			</div>
+			<ul class="bottom-btn" v-if="bookOrder">
+				<li class='btn-word' @click="createOrder">抢单</li>
+				<li class="one"><img src="../imgs/1.png" alt=""></li>
+				<li class="two"><img src="../imgs/2.png" alt=""></li>
+			</ul>
+		</div>
+	</body>
+</html>
+
+
+<script type="text/javascript">
+	mui.plusReady(function () {
+	    
+	})
+	
+	var VueObject = new Vue({
+		el: '#vuemain',
+		data: function() {
+			return {
+				RouteInfo: {
+					routeInfo: [],
+					routeLine: [],
+					trip_id: 0,
+					driver_commute_id: 0,
+					distance: 0,
+					person: 0
+				},
+				OrderInfo:{
+					record_list: [],
+					index: 0,
+					originData: []
+				},
+				bookOrder: true,
+				showLast: false,
+				showNext: false,
+				showDetail: false
+			}
+		},
+		updated: function() {
+			 var sliderMuiObj = mui(".mui-slider");//滑动科目 
+				sliderMuiObj.slider({
+					interval: 0  //如果你想自动3000ms滑动一下就写上这个。
+				});
+		},
+		methods: {
+			showContent() {
+				$(".route_info").slideToggle()
+                $('.showBtn').show()
+			},
+			showDetailContent() {
+				this.showDetail = !this.showDetail
+			},
+			getName(sex,name){
+				if(sex == 1){
+					return name.slice(0,1) + '先生'
+				}else{
+					return name.slice(0,1) + '女士'
+				}
+			},
+			getTime(time){
+				return time.slice(0,5)
+			},
+			itemSlide(e){
+				var index = e.detail.slideNumber
+				this.drawLine(index)
+			},
+			drawLine(index){
+				var opts = {
+				  width : 150,     // 信息窗口宽度
+				  height: 30,     // 信息窗口高度
+				  title :  "途经点", // 信息窗口标题
+				  enableMessage:true,//设置允许信息窗发送短息
+				  message:"亲耐滴，晚上一起吃个饭吧？戳下面的链接看下地址喔~"
+				}
+
+				if(this.bookOrder){
+					var startPoint = new BMap.Point(this.RouteInfo.routeInfo[index].origin_longitude, this.RouteInfo.routeInfo[index].origin_latitude)
+					var endPoint = new BMap.Point(this.RouteInfo.routeInfo[index].destination_longitude, this.RouteInfo.routeInfo[index].destination_latitude)
+					// 创建信息窗口对象 
+					var infoWindow_start = new BMap.InfoWindow(this.RouteInfo.routeInfo[index].origin, opts);  
+				}else{
+					var item_index = this.OrderInfo.index
+					
+					var startPoint = new BMap.Point(this.OrderInfo.record_list[item_index][index].origin_longitude, this.OrderInfo.record_list[item_index][index].origin_latitude)
+					var endPoint = new BMap.Point(this.OrderInfo.record_list[item_index][index].destination_longitude, this.OrderInfo.record_list[item_index][index].destination_latitude)
+					// 创建信息窗口对象 
+					var infoWindow_start = new BMap.InfoWindow(this.OrderInfo.record_list[item_index][index].origin, opts)
+				}
+				
+				map.openInfoWindow(infoWindow_start, startPoint); //开启信息窗口
+				//渲染当前路线,延时太长,暂不考虑
+				/*var LineIndex = 2*index + 1
+				 this.routeLine[LineIndex].getPolyline().setStrokeColor('red')
+				this.routeLine[LineIndex].getPolyline().setStrokeOpacity(0.8) */
+			},
+			createOrder() {
+				axios.get(baseURL + '/bookOrder',{
+					params: {
+						trip_id: parseInt(this.RouteInfo.trip_id),
+						distance: parseFloat(this.RouteInfo.distance),
+						driver_commute_id: parseInt(this.RouteInfo.driver_commute_id),
+						person: parseInt(this.RouteInfo.person)
+					}
+				}).then(res => {
+					if(res.data.status == 10000){
+						mui.alert('抢单成功','通知','确定',function(){
+							mui.back();
+						})
+					}else{
+						//抢单失败
+						mui.alert(res.data.message,'确定',function(){
+							mui.back()
+						})
+					}
+				})
+			},
+			goLast() {
+				//上一页
+				removeMarker()
+				this.OrderInfo.index -= 1
+				if(this.OrderInfo.index == 0){
+					this.showLast = false
+				}
+				if(this.OrderInfo.record_list.length > 1){
+					this.showNext = true
+				}
+				drawRoute(this.OrderInfo.originData[this.OrderInfo.index])
+			},
+			goNext() {
+				//下一页
+				removeMarker()
+				this.OrderInfo.index += 1;
+				if(this.OrderInfo.index + 1 == this.OrderInfo.record_list.length){
+					this.showNext = false
+				}
+				this.showLast = true
+				drawRoute(this.OrderInfo.originData[this.OrderInfo.index])
+			},
+			dial(mobile){
+				// 拨打电话
+				var btnArray = ['否', '是'];
+				mui.confirm('是否拨打电话?','通知',btnArray,function(e){
+					if (e.index == 1) {
+						//跳转到行驶路线页
+						plus.device.dial( mobile, true );
+					}
+				})
+			}
+		}
+	})
+
+	
+	$(document).ready(function(){
+		$(".showBtn").click(function(){
+			$(".route_info").slideToggle()
+			$(this).hide()
+		})
+	});
+	
+	document.addEventListener('LoadRoute',function(event){
+		//加载用户路线信息
+		//获取用户trip_id
+		plus.nativeUI.showWaiting('加载中...', {
+			width: '100px',
+			height: '100px'
+		})
+		var trip_id = event.detail.trip_id;
+		var route_type = event.detail.type
+		
+		
+		//获取司机commute_id
+		var commute_id = localStorage.getItem(route_type + '_commute_id')
+		VueObject.RouteInfo.trip_id = trip_id
+		VueObject.RouteInfo.driver_commute_id = commute_id
+		
+		axios.get(baseURL + '/getPassengerRoute',{
+			params: {
+				trip_id: trip_id, 
+				commute_id: commute_id
+			}
+		})
+		.then(res => {
+			//渲染百度地图,计算顺路出行路线
+			console.log(res.data)
+			var routeInfo = []
+			routeInfo.push(res.data.currentInfo)
+			for(var i = 0; i< res.data.hitchInfo.length; i++){
+				routeInfo.push(res.data.hitchInfo[i])
+			}
+			VueObject.RouteInfo.routeInfo = routeInfo;
+			VueObject.RouteInfo.person = routeInfo[0].person
+			getLocation(res.data)
+		})
+	})
+
+
+	document.addEventListener('LoadOrderDetail', function(event){
+		//加载订单信息
+		var record_list = event.detail.list;
+		plus.nativeUI.showWaiting('加载中...', {
+			width: '100px',
+			height: '100px'
+		})
+
+		axios.get(baseURL + '/getOrderDetail',{params: {record_ids: record_list}})
+			.then(res => {
+				//保留原始信息
+				VueObject.OrderInfo.originData = res.data
+		
+				var record_list = []
+				for(var i = 0; i< res.data.length; i++) {
+					var tmp = []
+					tmp.push(res.data[i].currentInfo)
+					for(var j = 0; j< res.data[i].hitchInfo.length; j++){
+						tmp.push(res.data[i].hitchInfo[j])
+					}
+					record_list.push(tmp)
+				}
+				VueObject.OrderInfo.record_list = record_list
+				VueObject.OrderInfo.index = 0
+				VueObject.bookOrder = false
+				if(res.data.length > 1){
+					VueObject.showNext = true
+				}
+				getLocation(res.data[0])
+			})
+		
+	})
+	
+	
+	//全局map对象
+	var map = null
+	//全局Point对象
+	var myPoint = null
+	
+	//获取定位
+	/* function getLocation(res){
+		var geolocation = new BMap.Geolocation();
+		geolocation.getCurrentPosition(function(r){
+			
+		if(this.getStatus() == BMAP_STATUS_SUCCESS){
+				myPoint = r.point
+				initMap(r.point, res)
+			}
+			else {
+				alert('failed'+this.getStatus());
+			}        
+		});
+	} */
+	
+	function getLocation(res){
+		//获取h5定位(GPS经纬度)
+		plus.geolocation.getCurrentPosition(function(position) {
+			//GPS经纬度换算
+			var currentLon = position.coords.longitude;
+			var currentLat = position.coords.latitude;
+			
+			myPoint = new BMap.Point(currentLon, currentLat);
+			BMap.Convertor.translate(myPoint, 2,function(){
+				initMap(myPoint, res)
+			});
+		}, function(e) {
+			mui.toast("异常:" + e.message);
+		});
+	}
+	
+	
+	//初始化百度地图
+	function initMap(gpspoint, res) {
+		map = new BMap.Map('container')
+		//地图控件
+		map.addControl(new BMap.NavigationControl());
+		map.addControl(new BMap.ScaleControl());
+		map.addControl(new BMap.OverviewMapControl());
+		map.centerAndZoom(gpspoint, 17);
+		//标注当前位置
+		// map.addOverlay(new BMap.Marker(gpspoint));
+		//加载附近
+		drawRoute(res)
+	}
+	
+	
+	//渲染出行路线
+	function drawRoute(res){
+		var driverRoute = res.driverRoute 	//司机路线信息
+		var hitchInfo = res.hitchInfo		//已接单信息
+		var currentInfo = res.currentInfo	//当前新接的路线信息
+
+		var driver_start = new BMap.Point(driverRoute.origin_longitude, driverRoute.origin_latitude)
+		var driver_end = new BMap.Point(driverRoute.destination_longitude, driverRoute.destination_latitude)
+		
+		var hitchPoint = []
+		var current_start = new BMap.Point(currentInfo.origin_longitude, currentInfo.origin_latitude)
+		var current_end = new BMap.Point(currentInfo.destination_longitude, currentInfo.destination_latitude)
+		hitchPoint.push(current_start)
+		hitchPoint.push(current_end)
+		
+		for(var i=0; i<hitchInfo.length; i++){
+			var temPoint_start = new BMap.Point(hitchInfo[i].origin_longitude, hitchInfo[i].origin_latitude)
+			var temPoint_end = new BMap.Point(hitchInfo[i].destination_longitude, hitchInfo[i].destination_latitude)
+			hitchPoint.push(temPoint_start)
+			hitchPoint.push(temPoint_end)
+		}
+		var routePolicy = [BMAP_DRIVING_POLICY_LEAST_TIME,BMAP_DRIVING_POLICY_LEAST_DISTANCE,BMAP_DRIVING_POLICY_AVOID_HIGHWAYS];
+		var prefer = localStorage.getItem('prefer')
+		var myPolicy = prefer ? routePolicy[prefer] : routePolicy[0]
+		
+		var driving = new BMap.DrivingRoute(
+			map, {
+				renderOptions:{map: map, panel: "route_detail", autoViewport: true},
+				policy: myPolicy,
+				onSearchComplete: ComputedDistance
+			})
+		driving.search(driver_start, driver_end,{waypoints: hitchPoint});//waypoints表示途经点
+		
+		//添加路线后的回调函数
+		driving.setPolylinesSetCallback(function(routes){
+			/*此routeLine是表示当前路线,当初的设计是想滑动后路线高亮,延时太长,暂不考虑*/
+			//VueObject.RouteInfo.routeLine = routes
+			VueObject.drawLine(0)
+			plus.nativeUI.closeWaiting()
+		})
+	}
+
+	//清空地图上的所有Marker
+	function removeMarker(){
+		map.clearOverlays()
+	}
+	
+	//计算出行距离
+	function ComputedDistance(results){
+		var plan = results.getPlan(0)
+		var distance = plan.getDistance(false)/1000
+		VueObject.RouteInfo.distance = distance;
+	}
+	
+</script>

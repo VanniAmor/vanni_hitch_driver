@@ -1,0 +1,147 @@
+body{
+	background: #FFF;
+}
+/********************************** 顶部导航栏 *******************************/
+.bar{
+	background: rgb(0,200,140);
+	height: 3rem;
+	line-height: 3rem;
+	display: flex;
+	position: fixed;
+	top: 0;
+}
+#icon-menu{
+	color:white;
+	margin: auto;
+	margin-left: -1rem;
+	margin-right: 0;
+}
+.header-title{
+	width: 5rem;
+	position: absolute;
+	left: 50%;
+	margin-left: -2.5rem;
+	text-align: center;
+	color: white;
+}
+/********************************** 页面卡片 *******************************/
+.my-card{
+	margin-top: 4rem;
+	border-radius: 1rem;
+	width: 96%;
+	text-align: center;
+	position: absolute;
+	left: 50%;
+	margin-left: -48%;
+}
+.card-content{
+	display: flex;
+}
+/********************************** 卡片左边 *******************************/
+.left_item{
+	text-align: left;
+	width: 40%;
+	margin: auto;
+	height: 7rem;
+}
+.left_title{
+	margin-top: .5rem;
+	margin-left: 1rem;
+	color: #888;
+	font-size: 16px;
+}
+.left_content{
+	font-size: 20px;
+	font-weight: 600;
+	margin-top: 1.3rem;
+	margin-left: 1rem;
+	border-bottom: 1px #000000 solid;
+	width: 80%;
+}
+.calendar{
+	margin-top: 1rem;
+	font-size: 16px;
+	margin-left: 1rem;
+	font-weight: 600;
+}
+/********************************** 卡片右边 *******************************/
+.right_item{
+	text-align: right;
+	width: 40%;
+	height: 7rem;
+	margin: auto;
+	float: right;
+}
+.right_title{
+	margin-top: .5rem;
+	margin-right: 1rem;
+	color: #888;
+	font-size: 16px;
+}
+.right_content{
+	font-size: 20px;
+	font-weight: 600;
+	margin-top: 1.3rem;
+	margin-right: 1rem;
+	border-bottom: 1px #000000 solid;
+	width: 80%;
+	float: right;
+}
+.change{
+	margin: auto;
+}
+.change img{
+	width: 2rem;
+}
+/********************************** 确认按钮 *******************************/
+.submit{
+	height: 2rem;
+	width: 50%;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	border-radius: 5px;
+	font-size: 16px;
+}
+.disabled{
+	background: #ddd;
+	color: #eee;
+}
+.enabled{
+	background: rgb(0, 199, 140);
+	color: #fff;
+}
+/********************************** 搜索结果列表 *******************************/
+.list{
+	position: fixed;
+	top: 18rem;
+	height: 58%;
+	width: 96%;
+	left: 50%;
+	margin-left: -48%;
+	border-radius: 1rem;
+}
+.list_left{
+	width: 40%;
+	margin: auto;
+	margin-left: 0;
+}
+.place{
+	display: flex;
+	height: 2rem;
+}
+.origin{
+	margin: auto;
+	margin-left: 0;
+}
+.end{
+	margin: auto;
+}
+.mobile{
+	margin-left: 0;
+}
+.list_right{
+	width: 30%;
+	margin: auto;
+	margin-right: -3rem;
+	font-size: 16px;
+}

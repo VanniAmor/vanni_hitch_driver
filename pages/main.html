@@ -1,0 +1,587 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		
+		<link href="../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet"  href="../css/main/main.css"/>
+		<script src="../js/mui.js"></script>
+		<script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript" src="../js/axios.min.js"></script>
+		<script type="text/javascript" src="../js/base.js"></script>
+		<script type="text/javascript" src="../js/config.js"></script>
+		<script type="text/javascript" src="../js/vue.min.js"></script>
+		<script src="http://cdn-hangzhou.goeasy.io/goeasy.js"></script>
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=百度地图ak"></script>
+		<script type="text/javascript" src="http://developer.baidu.com/map/jsdemo/demo/convertor.js"></script>
+		<script src="https://cdn.bootcss.com/vConsole/3.3.0/vconsole.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+		</script>
+	</head>
+
+	<body>
+		<div id="vuemain">
+			<div id="container" style="display: none;"></div>
+			<header class="mui-bar mui-bar-nav mui-bar-nav-bg main-bar">
+				<a id="personal-center" class="mui-icon"><img class="icon-logo-min" src="../imgs/user.png" alt=""></a>
+				<a id="cooperative-partner" class="mui-icon mui-pull-right"><img class="icon-logo-min" src="../imgs/business.png" alt=""></a>
+				<h1 class="mui-title main-title">拼车网司机端</h1>
+			</header>
+			<div class="mask"></div>
+			<div class="mui-slider">
+				<div class="mui-slider-group mui-slider-loop main-slider">
+					<!--支持循环，需要重复图片节点-->
+					<div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="../imgs/pic3.jpg" /></a></div>
+					<div class="mui-slider-item"><a href="#"><img src="../imgs/pic1.jpg" /></a></div>
+					<div class="mui-slider-item"><a href="#"><img src="../imgs/pic2.jpg" /></a></div>
+					<div class="mui-slider-item"><a href="#"><img src="../imgs/pic3.jpg" /></a></div>
+					<!--支持循环，需要重复图片节点-->
+					<div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="../imgs/pic1.jpg" /></a></div>
+				</div>
+				<div class="mui-slider-indicator">
+					<div class="mui-indicator mui-active"></div>
+					<div class="mui-indicator"></div>
+					<div class="mui-indicator"></div>
+				</div>
+			</div>
+			
+			<div class="icons">
+				<div class="icon">
+					<div class="icon-img">
+						<img class="icon-img-content" src="../imgs/icons/qiye.png" alt="">
+					</div>
+					<p class="icon-desc">同城拼车</p>
+				</div>
+				<div class="icon">
+					<div class="icon-img">
+						<img class="icon-img-content" src="../imgs/icons/chuchashenqing.png" alt="">
+					</div>
+					<p class="icon-desc">长途拼车</p>
+				</div>
+				<div class="icon">
+					<div class="icon-img">
+						<img class="icon-img-content" src="../imgs/icons/kaoqin.png" alt="">
+					</div>
+					<p class="icon-desc">考勤打卡</p>
+				</div>
+				<div class="icon">
+					<div class="icon-img">
+						<img class="icon-img-content" src="../imgs/icons/kaoqin-.png" alt="">
+					</div>
+					<p class="icon-desc">外勤打卡</p>
+				</div>
+				<div class="icon">
+					<div class="icon-img">
+						<img class="icon-img-content" src="../imgs/icons/dailix-.png" alt="">
+					</div>
+					<p class="icon-desc">拼车记录</p>
+				</div>
+			</div>
+
+			<ul class="mui-table-view my-nav-group">
+				<li class="mui-table-view-cell" style="line-height: 1.5rem;" id="my_trips">
+					<a class="mui-navigate-right"><span class="my-trip">我的行程</span></a>
+				</li>
+				 <li class="mui-table-view-cell mui-media">
+					<a class="mui-navigate-right" id="setRoute">
+						<div class="mui-media-body">
+							<span class="my-free-ride">超级顺风车</span>
+							<div class="item-content" >
+								<div class="content-left">
+									<div class="content-left-img"><img style="width: .9rem;" src="../imgs/user/circle1.png" alt=""></div>
+									<div class="content-left-word">家</div>
+								</div>
+								<div class="content-right">
+									{{route.origin || '请设置'}}
+								</div>
+							</div>
+							<div class="item-content">
+								<div class="content-left">
+									<div class="content-left-img"><img style="width: 1rem;" src="../imgs/user/circle2.png" alt=""></div>
+									<span class="content-left-word">公司</span>
+								</div>
+								<div class="content-right">
+									{{route.destination || '请设置'}}
+								</div>
+							</div>
+						</div>
+					</a>
+				</li>
+			</ul>
+			
+			<ul class="bottom-btn">
+				<li class='btn-word' @click='changeListenStatus'>{{ListenStatus}}</li>
+				<li class="one"><img src="../imgs/1.png" alt=""></li>
+				<li class="two"><img src="../imgs/2.png" alt=""></li>
+			</ul>
+			
+			<div class="bottomPopover">
+				<div class="PopoverHeader">
+					<span class="PopoverTitle"><strong>选择路线</strong></span>
+					<div class="PopoverBtn"><img src="../imgs/close.png" alt=""></div>
+				</div>
+				<div class="my-route">
+					<div class="route-item">
+						<span class="my-tip">上班</span>
+						<span class="circle-btn" value="1" id='work-route'></span>
+						<input type="radio" style="display:none;" />
+					</div>
+					<div class="route-item">
+						<span class="my-tip">下班</span>
+						<span class="circle-btn" value="2" id='offwork-route'></span>
+						<input type="radio" style="display:none;" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+
+<script type="text/javascript">
+	
+	var my_commutePage = null
+	var route_computedPage = null
+	
+	var VueObject = new Vue({
+		el: '#vuemain',
+		data: function(){
+			return {
+				route: {},
+				Listening: false,
+				ListenStatus: '开启接单',
+				redisName: '',
+				passengerRoute: null,
+				driverPath: [],
+				passengerPath: [],
+				isSimilar: false
+			}
+		},
+		methods: {
+			changeListenStatus() {
+				if(this.Listening === true){
+					/********************* 关闭接单模式 ********************/
+					//弹框确定是否关闭
+					var btnArray = ['否', '是'];
+					var _this = this
+					//若有多个订单,则整合
+					mui.confirm('确定关闭接单模式?','通知',btnArray,function(e){
+						if (e.index == 1) {
+							//关闭接单模式,重置状态
+							_this.Listening = false
+							_this.ListenStatus = '开启接单'
+							if(goEasy){
+								closeGoEasy(_this.redisName)
+							}
+						}
+					})
+				}else{
+					/********************* 开启接单模式 ********************/
+					//判断路线开关状态
+					document.querySelector('#work-route').classList.remove('active'); 
+					document.querySelector('#offwork-route').classList.remove('active');
+					var work_route_switch = localStorage.getItem('work-route-switch');
+					var offwork_route_switch = localStorage.getItem('offwork-route-switch');
+					if(work_route_switch==1 && offwork_route_switch ==1){
+						//打开弹窗,打开遮罩
+						document.querySelector('.bottomPopover').style.display = 'block'
+						document.querySelector('.mask').style.display = 'block'
+					}else if(work_route_switch == 1 && offwork_route_switch == 0){
+						//接收上班路线
+						this.Listening = true
+						this.ListenStatus = '接单中。。'
+						OpenListen(1)
+					}else if(work_route_switch == 0 && offwork_route_switch == 1){
+						//接收下班路线
+						this.Listening = true
+						this.ListenStatus = '接单中。。'
+						OpenListen(2)
+					}else{
+						//都没有开启
+						mui.toast('请设置路线')
+						mui.fire(my_commutePage, 'LoadRouteInfo')
+						my_commutePage.show('slide-in-right')
+					}
+				}
+			}
+		}
+	})
+	
+	//选择接单路线
+	mui(document.body).on('tap', '.circle-btn', function(e) {
+		document.querySelector('#work-route').classList.remove('active'); 
+		document.querySelector('#offwork-route').classList.remove('active');
+		e.target.classList.add('active');
+		//开启对应接单模式
+		var route_typeNode = document.querySelector('.active');
+		var route_type = route_typeNode.attributes['value'].nodeValue
+		//关闭遮罩,关闭弹窗
+		document.querySelector('.bottomPopover').style.display = 'none'
+		document.querySelector('.mask').style.display = 'none'
+		//改变状态
+		VueObject.Listening = true
+		VueObject.ListenStatus = '接单中。。'
+		OpenListen(route_type, true)
+	})
+	
+	mui(document.body).on('tap', '.PopoverBtn', function(e){
+		//关闭遮罩,关闭弹窗
+		document.querySelector('.bottomPopover').style.display = 'none'
+		document.querySelector('.mask').style.display = 'none'
+		//重置状态
+		VueObject.Listening = false
+		VueObject.ListenStatus = '开启接单'
+	})
+	
+	
+	mui.plusReady(function(){
+		clearLastPages()
+		//加载页面内容
+		if(!my_commutePage){
+			my_commutePage = mui.preload({
+				id: 'my_commute.html',
+				url: 'my_commute.html'
+			})
+		}
+		if(!route_computedPage){
+			route_computedPage = mui.preload({
+				id: 'route_computed.html',
+				url: 'route_computed.html'
+			})
+		}
+		getRoute()
+		getOrder()
+		closeListen()
+	})
+	
+	document.addEventListener('getRoute', function(){
+		getRoute()
+	})
+	
+	
+	function clearLastPages(){
+		//清除登录、注册页面
+		var wvs = plus.webview.all();
+		var curr = plus.webview.currentWebview();
+		for (var i = 0, len = wvs.length; i < len; i++) {
+			//关闭除setting页面外的其他页面
+			if (wvs[i].getURL() == curr.getURL())
+				continue;
+			plus.webview.close(wvs[i]);
+		}
+	}
+	
+	//全局GoEasy对象
+	var goEasy = null
+	
+	var gallery = mui('.mui-slider');
+	gallery.slider({
+	  interval:5000//自动轮播周期，若为0则不自动播放，默认为0；
+	});
+	
+	//跳转到个人中心
+	mui(document.body).on('tap', '#personal-center', function(e) {
+		goToPages('./personal_center.html');
+	})
+	
+	//跳转到我的行程
+	mui(document.body).on('tap', '#my_trips', function(e){
+		goToPages('myRoute.html')
+	})
+	
+	//跳转到路线设置页
+	mui(document.body).on('tap', '#setRoute', function(e) {
+		mui.fire(my_commutePage, 'LoadRouteInfo');
+		my_commutePage.show('slide-in-right')
+	})
+	
+	//获取自己的上下班路线
+	function getRoute() {
+		axios.get(baseURL + '/getRoute',{})
+		.then(res=>{
+			//生成下班路线
+			if(res.data){
+				//显示路线
+				VueObject.route = res.data[0]
+			}else{
+				//显示提示语
+				document.querySelector('.my-free-ride-error').classList.add('mui-hidden')
+			}
+		})
+	}
+	
+	
+	//获取订单
+	function getOrder(){
+		axios.get(baseURL + '/getOrder')
+		.then( res => {
+			//若有,则显示确认框,点击确认则跳转到行驶路线页
+			var record_list = [];
+			for(var i=0; i< res.data.length; i++){
+				record_list.push( res.data[i].id )
+			}
+			if(record_list.length == 0){
+				return false;
+			}
+			var btnArray = ['否', '是'];
+			if(res.data){
+				//若有多个订单,则整合
+				mui.confirm('检测到你有订单，是否进入?','通知',btnArray,function(e){
+					if (e.index == 1) {
+						//跳转到行驶路线页
+						mui.fire(route_computedPage,'LoadOrderDetail',{list: record_list});
+						route_computedPage.show('slide-in-right');
+					}
+				})
+			}
+			//若无,则不显示
+		})
+	}
+	
+	//开启接收订单模式
+	function OpenListen(route_type, sign = true){
+		//route_type 1-上班,2-下班
+		var redisName = localStorage.getItem(route_type + '_redis_key');
+		VueObject.redisName = redisName
+		if(sign === false){
+			//直接开启GoEasy监听模式
+			//console.log("开启GoEasy")
+			openGoEasy(redisName, route_type)
+			return;
+		}
+		axios.get(baseURL + '/openListen',{
+			params: {redis_key: redisName},
+			})
+		.then(res => {
+			if(res.data.status == 10000){
+				//还未通过系统审核
+				mui.toast(res.data.message)
+				//关闭接收状态
+				closeListen()
+				return
+			}
+			if(res.data.status == 10001){
+				//若有直接返回,则是从set集合中获取到trip_id
+				let trip_id = res.data.data
+				computedDriverRoute(trip_id, route_type).then(( isSimilar ) => {
+					//震动蜂鸣提示
+					vibration()
+					beep()
+					var btnArray = ['否', '是'];
+					mui.confirm('接收到新的订单，是否进入?','通知',btnArray,function(e){
+						console.info(trip_id, route_type)
+						if (e.index == 1) {
+							//跳转到行驶路线页
+							mui.fire(route_computedPage,'LoadRoute',{trip_id: trip_id, type: route_type});
+							route_computedPage.show('slide-in-right');
+						}else{
+							//跳过该订单,开启GoEasy推送
+							OpenListen(route_type,false)
+						}
+					})
+				}).catch( () => {
+					// 不顺路, 继续接单
+				})
+			}
+			if(res.data.status == 10002){
+				//把司机ID添加到监听队列中
+				//开启GoEasy监听
+				openGoEasy(redisName, route_type)
+				return
+			}
+		}).catch( () => {
+			//关闭接收状态
+			closeListen()
+		})
+	}
+	
+	function openGoEasy(redisName, route_type){
+		console.info('redisName为' + redisName)
+		goEasy = new GoEasy({
+			appkey: "GoEasy的appkey",
+			onConnected: function() {
+				console.info('成功连接到GoEasy')
+			},
+			onConnectFailed: function(error) {
+				console.log(error.code + "  " + error.content)
+			}
+		});
+		//接受信息
+		goEasy.subscribe({
+			channel: redisName,
+			onMessage: function (message) {
+				//接收到trip_release表中的trip_id
+				var trip_id = message.content
+				computedDriverRoute(trip_id, route_type).then(( isSimilar ) => {
+					// 顺路,显示提示框，震动蜂鸣提示
+					vibration()
+					beep()
+					var btnArray = ['否', '是'];
+					mui.confirm('接收到新的订单，是否进入?','通知',btnArray,function(e){
+						if (e.index == 1) {
+							//重置监听状态
+							closeListen()
+							//跳转到行驶路线页
+							mui.fire(route_computedPage,'LoadRoute',{trip_id: trip_id, type: route_type});
+							route_computedPage.show('slide-in-right');
+						}
+					})
+				}).catch( () => {
+					// 不顺路，继续接单啊
+				} )
+			}
+		});
+	}
+	
+	//关闭GoEasy接收信息
+	function closeGoEasy(channel){
+		goEasy.unsubscribe ({
+			channel: channel + '',
+			onSuccess: function() {
+				console.info( channel + ' 频道取消成功')
+			},
+			onFailed: function() {
+				console.info(channel + ' 频道取消失败')
+			}
+		});
+	}
+	
+	//关闭GoEasy频道
+	function closeListen(){
+		VueObject.Listening = false
+		VueObject.ListenStatus = '开启接单'
+	}
+	
+	
+	//手机震动
+	function vibration(){
+	    /* navigator.vibrate = navigator.vibrate
+	            || navigator.webkitVibrate
+	            || navigator.mozVibrate
+	            || navigator.msVibrate;
+	
+	    navigator.vibrate([500, 300, 400,300]); */
+		plus.device.vibrate( 500 );
+	}
+	
+	//手机蜂鸣
+	function beep(){
+		//默认蜂鸣一声,可以在beep方法中设置蜂鸣时间
+		switch ( plus.os.name ) { //判断设备类型
+			case "iOS":
+				if ( plus.device.model.indexOf("iPhone") >= 0 ) { //判断是否为iPhone
+					plus.device.beep();
+					console.log = "设备蜂鸣中...";
+				} else {
+					console.log = "此设备不支持蜂鸣";
+				}
+			break;
+			default:
+				plus.device.beep();
+				console.log = "设备蜂鸣中...";
+			break;
+		}
+	}
+	
+	var map = null
+	
+	// 计算司机出行路线
+	function computedDriverRoute(trip_id, route_type){
+		return new Promise(function(resolve,reject){
+			//获取司机commute_id
+			var commute_id = localStorage.getItem(route_type + '_commute_id')
+			axios.get(baseURL + '/getPassengerRoute',{
+				params: {
+					trip_id: trip_id, 
+					commute_id: commute_id
+				}
+			}).then(res => {
+				// 获取司机和乘客的路线
+				VueObject.passengerRoute = res.data.currentInfo
+				var passengerRoute = res.data.currentInfo
+				var driverRoute = res.data.driverRoute
+				var driver_start = new BMap.Point(driverRoute.origin_longitude, driverRoute.origin_latitude)
+				var driver_end = new BMap.Point(driverRoute.destination_longitude, driverRoute.destination_latitude)
+				var passenger_start = new BMap.Point(passengerRoute.origin_longitude, passengerRoute.origin_latitude)
+				var passenger_end = new BMap.Point(passengerRoute.destination_longitude, passengerRoute.destination_latitude)
+				// 计算司机出行路线
+				map = new BMap.Map("container");
+				var driving = new BMap.DrivingRoute(
+					map, {renderOptions:{map: map, autoViewport: false}})
+				driving.search(driver_start, driver_end);
+				driving.setSearchCompleteCallback(function(r){
+					getDriverPath(r)
+					// 计算乘客出行路线
+					driving.search(passenger_start, passenger_end)
+					driving.setSearchCompleteCallback(function(q){
+						var a = getPassengerPath(q)
+						if(a)
+							resolve(a)
+						else
+							reject(a)
+					})
+				})
+			})
+		})
+	}
+	
+	// 获取到司机路线的轨迹点
+	function getDriverPath(routes){
+		VueObject.driverPath = routes.getPlan(0).getRoute(0).getPath()
+	}
+	// 获取到乘客路线的轨迹点
+	function getPassengerPath(routes){
+		VueObject.passengerPath = routes.getPlan(0).getRoute(0).getPath()
+		return ViolentMatch()
+	}
+	
+	// 计算路线的点与点的距离 朴素的KMP算法
+	function ViolentMatch(){
+		var s = null
+		var p = null
+		var sLen = 0
+		var pLen = 0
+		// 保证S > P
+		if(VueObject.driverPath.length >= VueObject.passengerPath.length){
+			s = VueObject.driverPath
+			p = VueObject.passengerPath
+			sLen = VueObject.driverPath.length
+			pLen = VueObject.passengerPath.length
+		}else{
+			s = VueObject.passengerPath
+			p = VueObject.driverPath
+			sLen = VueObject.passengerPath.length
+			pLen = VueObject.driverPath.length
+		}
+		console.info(pLen)
+		var i = 0
+		var j = 0
+		while (i < sLen && j < pLen)  {
+			// 修改判断条件为距离小于500m
+			if (map.getDistance(s[i], p[j]) <= 500)  
+			{  
+				//若距离小于500m半径（即两条路线的路径点非常靠近），则i++，j++      
+				i++;  
+				j++;
+			}else
+			{
+				/* i = i - j + 1 */
+				i++
+			}
+		}
+		// 有70%路线重合,则视为顺路
+		if(j >= 0.7 * pLen) {
+			console.info('顺路')
+			return true
+		} else{
+			console.info('不顺路')
+			return false
+		}
+	}
+	
+	
+	
+</script>
